@@ -1,0 +1,28 @@
+{$DOMAIN:localhost} {
+    # Compression for text, JSON, CSS, and JS
+    encode zstd gzip
+
+    # Allow large course video and PDF uploads (up to 1 GB)
+    request_body {
+        max_size 1GB
+    }
+
+    # Production security headers
+    header {
+        # Prevent MIME type sniffing
+        X-Content-Type-Options "nosniff"
+        # Protect against clickjacking
+        X-Frame-Options "SAMEORIGIN"
+        # Control referrer information
+        Referrer-Policy "strict-origin-when-cross-origin"
+        # Remove server identity header
+        -Server
+    }
+
+    # Reverse proxy to Node.js / Express application
+    reverse_proxy app:5000 {
+        # Disable response buffering for instant video chunk streaming & range requests
+        flush_interval -1
+    }
+}
+

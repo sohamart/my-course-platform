@@ -1,0 +1,129 @@
+/* ========================================================
+   MyCourse - Liquid Glass Design System Styles
+   Five-color palette:
+   #111111 (Black), #F5F5F5 (Off-white),
+   #DCDCFB (Lavender), #DDF5E5 (Mint), #DFF3F8 (Ice Blue)
+   ======================================================== */
+
+:root {
+  --color-black: #111111;
+  --color-offwhite: #F5F5F5;
+  --color-lavender: #DCDCFB;
+  --color-mint: #DDF5E5;
+  --color-iceblue: #DFF3F8;
+  --color-text-primary: #17171B;
+  --color-text-secondary: #65657D;
+}
+
+/* Base Glass Card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.58);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 26px;
+  box-shadow:
+    0 10px 36px -4px rgba(75, 70, 130, 0.07),
+    0 2px 8px -2px rgba(75, 70, 130, 0.04),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-hover {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 20px 48px -6px rgba(75, 70, 130, 0.12),
+    0 4px 12px -2px rgba(75, 70, 130, 0.06),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 0.95);
+}
+
+/* Tinted Glass Variants */
+.glass-lavender {
+  background: linear-gradient(135deg, rgba(220, 220, 251, 0.52) 0%, rgba(255, 255, 255, 0.45) 100%);
+  border: 1px solid rgba(220, 220, 251, 0.85);
+  box-shadow:
+    0 12px 36px -4px rgba(184, 184, 240, 0.22),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.glass-mint {
+  background: linear-gradient(135deg, rgba(221, 245, 229, 0.55) 0%, rgba(255, 255, 255, 0.45) 100%);
+  border: 1px solid rgba(221, 245, 229, 0.9);
+  box-shadow:
+    0 12px 36px -4px rgba(180, 232, 194, 0.22),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.glass-iceblue {
+  background: linear-gradient(135deg, rgba(223, 243, 248, 0.55) 0%, rgba(255, 255, 255, 0.45) 100%);
+  border: 1px solid rgba(223, 243, 248, 0.9);
+  box-shadow:
+    0 12px 36px -4px rgba(186, 228, 240, 0.22),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+/* Glass Header & Floating Nav */
+.glass-header {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(30px) saturate(170%);
+  -webkit-backdrop-filter: blur(30px) saturate(170%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 20px -2px rgba(75, 70, 130, 0.04);
+}
+
+.glass-nav-floating {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 16px 40px -8px rgba(75, 70, 130, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.95);
+  border-radius: 9999px;
+}
+
+/* Realistic 3D Water Droplets */
+.water-droplet {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.95) 0%, rgba(223, 243, 248, 0.45) 30%, rgba(220, 220, 251, 0.2) 70%, rgba(255, 255, 255, 0.1) 100%);
+  box-shadow:
+    inset -2px -3px 5px rgba(160, 190, 225, 0.35),
+    inset 2px 3px 5px rgba(255, 255, 255, 0.95),
+    0 4px 10px rgba(75, 70, 130, 0.12),
+    0 8px 18px rgba(75, 70, 130, 0.06);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* Specular highlight dot inside water drop */
+.water-droplet::after {
+  content: '';
+  position: absolute;
+  top: 22%;
+  left: 25%;
+  width: 28%;
+  height: 28%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 70%);
+  border-radius: 50%;
+  filter: blur(0.5px);
+}
+
+/* Secondary bottom glow reflection inside droplet */
+.water-droplet::before {
+  content: '';
+  position: absolute;
+  bottom: 18%;
+  right: 22%;
+  width: 35%;
+  height: 20%;
+  background: radial-gradient(ellipse, rgba(220, 220, 251, 0.75) 0%, rgba(255, 255, 255, 0) 80%);
+  border-radius: 50%;
+}
+

@@ -1,0 +1,94 @@
+@import './glass.css';
+@import './animations.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: #F5F5F5;
+    color: #17171B;
+    overflow-x: clip;
+  }
+
+  h1, h2, h3, h4, .brand-title {
+    font-family: 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: -0.02em;
+  }
+}
+
+/* ========================================================
+   Hide all scrollbars globally across all web elements
+   (Chrome, Safari, Edge, Firefox) while preserving smooth scrolling
+   ======================================================== */
+html,
+body,
+* {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE & Edge */
+}
+
+::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera */
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+}
+
+/* Lenis smooth scrolling rules */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent],
+[data-lenis-prevent],
+.overflow-y-auto,
+.overflow-auto {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroll-smooth {
+  scroll-behavior: smooth !important;
+}
+
+/* Modal and dialog scrollbar for internal scroll containers */
+.modal-scrollbar {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(180, 180, 200, 0.5) transparent !important;
+}
+
+.modal-scrollbar::-webkit-scrollbar {
+  display: block !important;
+  width: 6px !important;
+  height: 6px !important;
+}
+
+.modal-scrollbar::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.modal-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(180, 180, 200, 0.45) !important;
+  border-radius: 9999px !important;
+}
+
+.modal-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(130, 130, 160, 0.7) !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}

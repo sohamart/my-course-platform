@@ -1,0 +1,74 @@
+/* ========================================================
+   MyCourse - Fluid Motion & Liquid Wave Animations
+   ======================================================== */
+
+@keyframes float-droplet {
+  0%, 100% {
+    transform: translateY(0px) scale(1) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-8px) scale(1.03) rotate(2deg);
+  }
+  66% {
+    transform: translateY(-14px) scale(0.97) rotate(-2deg);
+  }
+}
+
+@keyframes liquid-drift {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(15px, -15px) rotate(3deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+@keyframes wave-flow {
+  0% {
+    transform: translateX(0) translateZ(0) scaleY(1);
+  }
+  50% {
+    transform: translateX(-25%) translateZ(0) scaleY(0.95);
+  }
+  100% {
+    transform: translateX(-50%) translateZ(0) scaleY(1);
+  }
+}
+
+@keyframes ambient-glow {
+  0%, 100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.06);
+  }
+}
+
+.animate-float-droplet {
+  animation: float-droplet 6s ease-in-out infinite;
+}
+
+.animate-liquid-drift {
+  animation: liquid-drift 12s ease-in-out infinite;
+}
+
+.animate-ambient-glow {
+  animation: ambient-glow 8s ease-in-out infinite;
+}
+
+/* Glass interactive press ripple */
+.ripple-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ripple-button:active {
+  transform: scale(0.975);
+}
+

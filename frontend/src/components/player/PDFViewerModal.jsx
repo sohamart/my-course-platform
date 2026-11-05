@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { X, ZoomIn, ZoomOut, Maximize2, Minimize2, FileText, Shield, ExternalLink, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { X, ZoomIn, ZoomOut, Maximize2, Minimize2, FileText, Shield, ExternalLink } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const PDFViewerModal = ({ note, onClose }) => {
   const [zoom, setZoom] = useState(100);
@@ -21,9 +21,12 @@ const PDFViewerModal = ({ note, onClose }) => {
   return (
     <div
       data-lenis-prevent
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
       onWheel={(e) => e.stopPropagation()}
       onContextMenu={handleContextMenu}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-md transition-all"
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-6 bg-black/75 backdrop-blur-xs transition-all"
     >
       <motion.div
         data-lenis-prevent
@@ -31,28 +34,30 @@ const PDFViewerModal = ({ note, onClose }) => {
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
         className={`w-full ${
-          isFullscreen ? 'h-full max-w-none' : 'max-w-5xl h-[85vh]'
-        } rounded-3xl glass-card flex flex-col overflow-hidden shadow-2xl border border-white/80 bg-brand-offwhite`}
+          isFullscreen ? 'h-full max-w-none rounded-none' : 'max-w-5xl h-[90vh] sm:h-[85vh] rounded-3xl'
+        } glass-card flex flex-col overflow-hidden shadow-2xl border border-white/80 bg-brand-offwhite`}
       >
-        {/* Top Control Bar */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/80 bg-white/70 backdrop-blur-md">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl glass-lavender flex items-center justify-center text-indigo-900">
+        {/* Top Control Bar - Fully Responsive for Mobile */}
+        <div className="flex items-center justify-between px-3 sm:px-5 py-2.5 sm:py-3.5 border-b border-white/80 bg-white/85 backdrop-blur-md shrink-0">
+          {/* Note Info */}
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1 mr-2">
+            <div className="w-8 h-8 rounded-xl glass-lavender flex items-center justify-center text-indigo-900 shrink-0">
               <FileText className="w-4 h-4" />
             </div>
-            <div>
-              <h3 className="text-xs sm:text-sm font-bold text-brand-black line-clamp-1">
+            <div className="min-w-0 flex-1">
+              <h3 className="text-xs sm:text-sm font-bold text-brand-black truncate">
                 {note.name}
               </h3>
-              <span className="text-[10px] text-brand-muted flex items-center gap-1 font-semibold">
-                <Shield className="w-3 h-3 text-emerald-600" /> Protected In-App PDF Reader
+              <span className="text-[10px] text-brand-muted flex items-center gap-1 font-semibold truncate">
+                <Shield className="w-3 h-3 text-emerald-600 shrink-0" /> Protected In-App PDF Reader
               </span>
             </div>
           </div>
 
-          {/* Controls: Zoom, Fullscreen, Close */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <div className="flex items-center rounded-xl bg-white/60 border border-white/80 p-1">
+          {/* Controls: Zoom, Open External, Fullscreen, Close */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* Desktop Zoom Controls */}
+            <div className="hidden sm:flex items-center rounded-xl bg-white/60 border border-white/80 p-1">
               <button
                 onClick={handleZoomOut}
                 className="p-1 rounded-lg hover:bg-white text-brand-muted hover:text-brand-black transition"
@@ -70,38 +75,58 @@ const PDFViewerModal = ({ note, onClose }) => {
               </button>
             </div>
 
+            {/* Open in new tab (Useful for mobile & external reader) */}
             {note.viewUrl && (
               <a
                 href={note.viewUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 rounded-xl bg-white/60 border border-white/80 hover:bg-white text-brand-muted hover:text-brand-black transition"
-                title="Open in New Tab"
+                className="p-2 rounded-xl bg-white/70 border border-white/80 hover:bg-white text-brand-muted hover:text-brand-black transition shrink-0"
+                title="Open PDF in New Tab / App"
+                aria-label="Open PDF in New Tab"
               >
                 <ExternalLink className="w-4 h-4" />
               </a>
             )}
 
+            {/* Desktop Fullscreen Toggle */}
             <button
               onClick={toggleFullscreen}
-              className="p-2 rounded-xl bg-white/60 border border-white/80 hover:bg-white text-brand-muted hover:text-brand-black transition"
+              className="hidden sm:flex p-2 rounded-xl bg-white/60 border border-white/80 hover:bg-white text-brand-muted hover:text-brand-black transition shrink-0"
               title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
             >
               {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
             </button>
 
+            {/* Close Button - ALWAYS visible on all screen sizes */}
             <button
               onClick={onClose}
-              className="p-2 rounded-xl bg-brand-black text-white hover:bg-neutral-800 transition cursor-pointer"
+              className="p-2 sm:p-2.5 rounded-xl bg-brand-black text-white hover:bg-neutral-800 transition cursor-pointer shrink-0 shadow-md active:scale-95 flex items-center justify-center ml-1"
               title="Close Viewer"
+              aria-label="Close Viewer"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </button>
           </div>
         </div>
 
+        {/* Mobile Quick Banner for Android In-App Readers */}
+        <div className="sm:hidden px-3.5 py-1.5 bg-brand-lavender/50 border-b border-brand-lavender/70 flex items-center justify-between text-[11px] font-semibold text-brand-black shrink-0">
+          <span className="truncate mr-2">Reading on mobile browser?</span>
+          {note.viewUrl && (
+            <a
+              href={note.viewUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-indigo-900 underline flex items-center gap-1 font-bold shrink-0"
+            >
+              Open Full Screen <ExternalLink className="w-3 h-3" />
+            </a>
+          )}
+        </div>
+
         {/* PDF Content Area */}
-        <div className="flex-1 bg-neutral-900 relative overflow-auto flex items-center justify-center p-2">
+        <div className="flex-1 bg-neutral-900 relative overflow-auto flex items-center justify-center p-1 sm:p-2">
           {loading && (
             <div className="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none bg-neutral-950/80 backdrop-blur-xs">
               <div className="w-10 h-10 rounded-full border-2 border-white/20 border-t-brand-mint animate-spin mb-3" />
@@ -132,4 +157,3 @@ const PDFViewerModal = ({ note, onClose }) => {
 };
 
 export default PDFViewerModal;
-

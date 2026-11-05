@@ -1,12 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 /**
  * Realistic 3D water droplets with specular highlights,
  * inner refractions, and gentle floating physics.
+ * Optimized with hardware-accelerated transforms for buttery smooth mobile scroll.
  */
 const WaterDroplets = ({ count = 5, className = '' }) => {
-  // Preset organic positions and sizes to look naturally dispersed
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const droplets = [
     { id: 1, size: 28, top: '15%', left: '12%', duration: 7, delay: 0 },
     { id: 2, size: 42, top: '65%', left: '88%', duration: 9, delay: 1.2 },
@@ -14,7 +25,7 @@ const WaterDroplets = ({ count = 5, className = '' }) => {
     { id: 4, size: 34, top: '80%', left: '18%', duration: 8.5, delay: 2 },
     { id: 5, size: 22, top: '48%', left: '4%', duration: 6.8, delay: 1.7 },
     { id: 6, size: 36, top: '12%', left: '60%', duration: 8, delay: 0.8 },
-  ].slice(0, count);
+  ].slice(0, isMobile ? Math.min(count, 2) : count);
 
   return (
     <div className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`}>
@@ -23,18 +34,22 @@ const WaterDroplets = ({ count = 5, className = '' }) => {
           key={d.id}
           className="water-droplet"
           style={{
-            width: d.size,
-            height: d.size,
+            width: isMobile ? Math.min(d.size, 26) : d.size,
+            height: isMobile ? Math.min(d.size, 26) : d.size,
             top: d.top,
             left: d.left,
           }}
-          animate={{
-            y: [0, -12, 0],
-            scale: [1, 1.05, 1],
-            rotate: [0, 3, -2, 0],
-          }}
+          animate={
+            isMobile
+              ? { y: [0, -6, 0] }
+              : {
+                  y: [0, -12, 0],
+                  scale: [1, 1.05, 1],
+                  rotate: [0, 3, -2, 0],
+                }
+          }
           transition={{
-            duration: d.duration,
+            duration: isMobile ? 8 : d.duration,
             repeat: Infinity,
             ease: 'easeInOut',
             delay: d.delay,
@@ -46,4 +61,3 @@ const WaterDroplets = ({ count = 5, className = '' }) => {
 };
 
 export default WaterDroplets;
-

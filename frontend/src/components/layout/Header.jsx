@@ -371,18 +371,19 @@ const Header = ({ onSearchClick }) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
                 onClick={() => setMobileMenuOpen(false)}
-                className="fixed inset-0 z-[9998] bg-black/45 backdrop-blur-xs md:hidden"
+                className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-xs md:hidden will-change-transform"
               />
             )}
             {mobileMenuOpen && (
               <motion.div
                 key="mobile-drawer-panel"
-                initial={{ x: '-110%', opacity: 0.8 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: '-110%', opacity: 0.8 }}
-                transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-                className="fixed top-2.5 bottom-2.5 left-2.5 z-[9999] w-[300px] max-w-[calc(100vw-20px)] rounded-[32px] bg-white/95 backdrop-blur-3xl border border-white/90 shadow-[0_20px_60px_-15px_rgba(75,70,130,0.25)] p-5 flex flex-col justify-between md:hidden overflow-hidden"
+                initial={{ x: '-105%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '-105%' }}
+                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                className="fixed top-2.5 bottom-2.5 left-2.5 z-[9999] w-[300px] max-w-[calc(100vw-20px)] rounded-[32px] bg-white/98 backdrop-blur-md border border-white/90 shadow-[0_20px_50px_-15px_rgba(75,70,130,0.22)] p-5 flex flex-col justify-between md:hidden overflow-hidden will-change-transform"
               >
                 <div className="flex-1 min-h-0 flex flex-col">
                   {/* Drawer Header */}
@@ -416,6 +417,7 @@ const Header = ({ onSearchClick }) => {
                   <div
                     data-lenis-prevent
                     className="flex-1 overflow-y-auto pr-1 space-y-1.5 overscroll-contain modal-scrollbar"
+                    style={{ WebkitOverflowScrolling: 'touch' }}
                   >
                     <span className="text-[10px] uppercase font-bold tracking-widest text-brand-muted px-3.5 mb-2 block">
                       {isAdmin ? 'ADMINISTRATION' : 'STUDENT PORTAL'}

@@ -10,15 +10,30 @@ export const SmoothScrollProvider = ({ children }) => {
   const location = useLocation();
 
   useEffect(() => {
-    // Initialize Lenis with Apple-grade smooth spring physics
+    // Detect mobile touch devices: phones and tablets have hardware-accelerated compositor scrolling.
+    // Hijacking touch events on mobile causes severe lag and frame drops.
+    const isTouchDevice =
+      typeof window !== 'undefined' &&
+      ('ontouchstart' in window || navigator.maxTouchPoints > 0 || window.innerWidth < 1024);
+
+    // On touch devices, allow 100% native smooth momentum scrolling without JS thread contention
+    if (isTouchDevice) {
+      document.documentElement.style.scrollBehavior = 'smooth';
+      return () => {
+        document.documentElement.style.scrollBehavior = '';
+      };
+    }
+
+    // Initialize Lenis strictly for desktop pointer/wheel/trackpad devices
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.1,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
       wheelMultiplier: 1,
-      touchMultiplier: 1.8,
+      touchMultiplier: 0,
+      syncTouch: false,
       infinite: false,
       prevent: (node) => {
         if (!node || node === document.documentElement || node === document.body) return false;
@@ -60,7 +75,7 @@ export const SmoothScrollProvider = ({ children }) => {
 
     animationFrameId = requestAnimationFrame(raf);
 
-    // Initial check for current route
+    // Initial check for admin workspace route
     if (location.pathname.startsWith('/admin')) {
       lenis.stop();
     }
@@ -80,9 +95,11 @@ export const SmoothScrollProvider = ({ children }) => {
         // Admin workspace uses pinned SaaS shell (main scrolls natively)
         lenisRef.current.stop();
       } else {
-        // Student and public pages use smooth window scroll
+        // Student and public pages use smooth window scroll on desktop
         lenisRef.current.start();
       }
+    } else {
+      window.scrollTo(0, 0);
     }
   }, [location.pathname]);
 
@@ -96,4 +113,3 @@ export const SmoothScrollProvider = ({ children }) => {
 export const useLenis = () => {
   return useContext(LenisContext);
 };
-

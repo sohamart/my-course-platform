@@ -45,11 +45,11 @@ const AdminSidebar = () => {
                 to={link.path}
                 className={`flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all ${
                   isActive
-                    ? 'bg-brand-lavender/70 text-brand-black shadow-sm border border-white/80'
-                    : 'text-brand-muted hover:text-brand-black hover:bg-white/50'
+                    ? 'bg-brand-lavender/70 text-brand-black shadow-sm border border-white/80 font-bold'
+                    : 'text-neutral-700 hover:text-brand-black hover:bg-white/70'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-brand-black' : 'text-brand-muted'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-brand-black' : 'text-neutral-600'}`} />
                 {link.label}
               </NavLink>
             );

@@ -63,6 +63,7 @@ const LearningPlayer = () => {
   const [bufferedPercent, setBufferedPercent] = useState(0);
   const [isBuffering, setIsBuffering] = useState(false);
   const [isMediaReady, setIsMediaReady] = useState(false);
+  const [isVideoLoading, setIsVideoLoading] = useState(true);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'notes'
@@ -146,10 +147,15 @@ const LearningPlayer = () => {
 
   // Trigger active browser media preloading whenever lesson changes
   useEffect(() => {
-    if (videoRef.current && currentLesson?.videoUrl) {
-      try {
-        videoRef.current.load();
-      } catch (e) {}
+    if (currentLesson?.videoUrl) {
+      setIsVideoLoading(true);
+      if (videoRef.current) {
+        try {
+          videoRef.current.load();
+        } catch (e) {}
+      }
+    } else {
+      setIsVideoLoading(false);
     }
   }, [currentLesson?.videoUrl]);
 
@@ -157,9 +163,11 @@ const LearningPlayer = () => {
   const loadLesson = async (lessonId) => {
     try {
       setLessonLoading(true);
+      setIsVideoLoading(true);
       setIsBuffering(false);
       setBufferedPercent(0);
       setCurrentTime(0);
+      setIsMediaReady(false);
       setSearchParams({ lesson: lessonId });
       const res = await api.get(`/student/lessons/${lessonId}/access`);
       if (res.data && res.data.success) {
@@ -167,7 +175,6 @@ const LearningPlayer = () => {
         setCurrentLesson(lData);
         if (lData.duration) {
           setDuration(lData.duration);
-          setIsMediaReady(true);
         }
         setIsPlaying(false);
       }
@@ -438,12 +445,19 @@ const LearningPlayer = () => {
                   src={currentLesson.videoUrl}
                   preload="auto"
                   playsInline
+                  onLoadStart={() => setIsVideoLoading(true)}
+                  onLoadedData={() => {
+                    setIsVideoLoading(false);
+                    setIsMediaReady(true);
+                  }}
                   onPlay={() => setIsPlaying(true)}
                   onPlaying={() => {
+                    setIsVideoLoading(false);
                     setIsBuffering(false);
                     setIsPlaying(true);
                   }}
                   onCanPlay={() => {
+                    setIsVideoLoading(false);
                     setIsMediaReady(true);
                     setIsBuffering(false);
                     updateBuffer();
@@ -458,6 +472,7 @@ const LearningPlayer = () => {
                   onLoadedMetadata={handleLoadedMetadata}
                   onError={(e) => {
                     console.error('Video error:', e);
+                    setIsVideoLoading(false);
                     setIsBuffering(false);
                     setIsPlaying(false);
                   }}
@@ -484,7 +499,7 @@ const LearningPlayer = () => {
 
               {/* Central Play Button */}
               <AnimatePresence>
-                {!isPlaying && !lessonLoading && currentLesson?.videoUrl && (
+                {!isPlaying && !lessonLoading && !isVideoLoading && currentLesson?.videoUrl && (
                   <motion.button
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
@@ -503,22 +518,47 @@ const LearningPlayer = () => {
                 )}
               </AnimatePresence>
 
-              {/* Lesson Data Loading Overlay */}
+              {/* Lesson Data & Video Media Loading Overlay (Never blank; shows beautiful animated loader before video arrives) */}
               <AnimatePresence>
-                {lessonLoading && currentLesson?.videoUrl && (
+                {(lessonLoading || isVideoLoading) && (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/85 backdrop-blur-[2px] pointer-events-none p-6 text-center"
+                    className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-neutral-950/95 backdrop-blur-xs p-6 text-center select-none"
                   >
-                    <div className="relative flex items-center justify-center mb-3">
-                      <div className="w-12 h-12 rounded-full border-3 border-white/15 border-t-brand-mint animate-spin" />
+                    {/* Background subtle course thumbnail */}
+                    {course?.thumbnailUrl && (
+                      <img
+                        src={course.thumbnailUrl}
+                        alt=""
+                        className="absolute inset-0 w-full h-full object-cover opacity-20 blur-md pointer-events-none"
+                      />
+                    )}
+
+                    <div className="relative z-10 flex flex-col items-center">
+                      {/* Animated glowing spinner with Brand Mint Accent */}
+                      <div className="relative w-16 h-16 sm:w-20 sm:h-20 mb-4 flex items-center justify-center">
+                        <div className="absolute inset-0 rounded-full border-3 border-white/10" />
+                        <div className="absolute inset-0 rounded-full border-3 border-transparent border-t-brand-mint border-r-brand-lavender animate-spin" />
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-brand-mint shadow-inner">
+                          <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 animate-pulse" />
+                        </div>
+                      </div>
+
+                      <h3 className="text-sm sm:text-base font-bold text-white tracking-wide mb-1">
+                        Loading HD Video Stream...
+                      </h3>
+                      <p className="text-xs text-neutral-400 max-w-xs font-medium">
+                        Connecting to private cloud storage & buffering video...
+                      </p>
+
+                      {/* Shimmering pulse pill */}
+                      <div className="mt-4 w-44 sm:w-52 h-1.5 rounded-full bg-white/15 overflow-hidden">
+                        <div className="w-full h-full bg-gradient-to-r from-brand-lavender via-brand-mint to-brand-iceblue animate-pulse rounded-full" />
+                      </div>
                     </div>
-                    <h3 className="text-sm sm:text-base font-bold text-white tracking-wide">
-                      Connecting to Secure Stream...
-                    </h3>
                   </motion.div>
                 )}
               </AnimatePresence>

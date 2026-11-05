@@ -373,7 +373,7 @@ const Header = ({ onSearchClick }) => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
                 onClick={() => setMobileMenuOpen(false)}
-                className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-xs md:hidden will-change-transform"
+                className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-xs md:hidden will-change-transform"
               />
             )}
             {mobileMenuOpen && (
@@ -383,13 +383,13 @@ const Header = ({ onSearchClick }) => {
                 animate={{ x: 0 }}
                 exit={{ x: '-105%' }}
                 transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                className="fixed top-2.5 bottom-2.5 left-2.5 z-[9999] w-[300px] max-w-[calc(100vw-20px)] rounded-[32px] bg-white/98 backdrop-blur-md border border-white/90 shadow-[0_20px_50px_-15px_rgba(75,70,130,0.22)] p-5 flex flex-col justify-between md:hidden overflow-hidden will-change-transform"
+                className="fixed top-2.5 bottom-2.5 left-2.5 z-[9999] w-[310px] max-w-[calc(100vw-20px)] rounded-[32px] bg-white border border-neutral-200/90 shadow-[0_25px_60px_-10px_rgba(0,0,0,0.35)] p-5 flex flex-col justify-between md:hidden overflow-hidden will-change-transform"
               >
                 <div className="flex-1 min-h-0 flex flex-col">
                   {/* Drawer Header */}
-                  <div className="flex items-center justify-between pb-3.5 border-b border-brand-lavender/40 mb-3.5 shrink-0">
+                  <div className="flex items-center justify-between pb-3.5 border-b border-neutral-100 mb-3.5 shrink-0">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-10 h-10 rounded-2xl bg-brand-black text-white flex items-center justify-center font-bold text-xs uppercase overflow-hidden shrink-0 shadow-sm border border-white/80">
+                      <div className="w-10 h-10 rounded-2xl bg-brand-black text-white flex items-center justify-center font-bold text-xs uppercase overflow-hidden shrink-0 shadow-sm border border-neutral-200">
                         {user?.avatarUrl ? (
                           <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
                         ) : (
@@ -397,8 +397,8 @@ const Header = ({ onSearchClick }) => {
                         )}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-bold text-brand-black brand-title truncate">{user?.name}</p>
-                        <span className="inline-block mt-0.5 text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-brand-lavender text-brand-black border border-white/80">
+                        <p className="text-sm font-bold text-neutral-900 brand-title truncate">{user?.name || 'User'}</p>
+                        <span className="inline-block mt-0.5 text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-brand-lavender text-neutral-900 border border-indigo-200">
                           {user?.role || 'Student'}
                         </span>
                       </div>
@@ -406,7 +406,7 @@ const Header = ({ onSearchClick }) => {
 
                     <button
                       onClick={() => setMobileMenuOpen(false)}
-                      className="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-brand-black transition flex items-center justify-center shadow-2xs border border-white/80 cursor-pointer shrink-0"
+                      className="w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-900 transition flex items-center justify-center shadow-xs border border-neutral-200/80 cursor-pointer shrink-0"
                       aria-label="Close navigation menu"
                     >
                       <X className="w-4 h-4" />
@@ -416,12 +416,15 @@ const Header = ({ onSearchClick }) => {
                   {/* Nav Links - Scrollable */}
                   <div
                     data-lenis-prevent
-                    className="flex-1 overflow-y-auto pr-1 space-y-1.5 overscroll-contain modal-scrollbar"
+                    className="flex-1 overflow-y-auto pr-1 space-y-2 overscroll-contain modal-scrollbar"
                     style={{ WebkitOverflowScrolling: 'touch' }}
                   >
-                    <span className="text-[10px] uppercase font-bold tracking-widest text-brand-muted px-3.5 mb-2 block">
-                      {isAdmin ? 'ADMINISTRATION' : 'STUDENT PORTAL'}
-                    </span>
+                    <div className="px-2 mb-2.5 flex items-center justify-between">
+                      <span className="text-[11px] uppercase font-extrabold tracking-wider text-neutral-800">
+                        {isAdmin ? 'ADMINISTRATION' : 'STUDENT PORTAL'}
+                      </span>
+                      <span className="w-2 h-2 rounded-full bg-brand-lavender border border-indigo-300" />
+                    </div>
 
                     {(isAdmin ? adminNavLinks : studentNavLinks).map((item) => {
                       const Icon = item.icon;
@@ -435,24 +438,39 @@ const Header = ({ onSearchClick }) => {
                           key={item.path}
                           to={item.path}
                           onClick={() => setMobileMenuOpen(false)}
-                          className={`flex items-center gap-3 px-4 py-2.5 rounded-2xl text-xs font-semibold transition-all ${
+                          className={`flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs font-bold transition-all shadow-2xs active:scale-98 ${
                             isActive
-                              ? 'bg-brand-lavender text-brand-black shadow-xs font-bold border border-white/80'
-                              : 'text-brand-muted hover:text-brand-black hover:bg-white/70'
+                              ? 'bg-brand-lavender text-neutral-950 border border-indigo-300/90 shadow-sm'
+                              : 'bg-neutral-100 text-neutral-900 border border-neutral-200/90 hover:bg-neutral-200/80 hover:text-black'
                           }`}
                         >
-                          <Icon className={`w-4 h-4 ${isActive ? 'text-brand-black' : 'text-brand-muted'}`} />
-                          <span>{item.label}</span>
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div
+                              className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 shadow-2xs ${
+                                isActive
+                                  ? 'bg-white text-neutral-950'
+                                  : 'bg-white text-neutral-900 border border-neutral-200'
+                              }`}
+                            >
+                              <Icon className="w-4 h-4 text-neutral-900" />
+                            </div>
+                            <span className="truncate font-bold text-neutral-900">{item.label}</span>
+                          </div>
+                          {isActive ? (
+                            <span className="w-2 h-2 rounded-full bg-neutral-950 shrink-0" />
+                          ) : (
+                            <ArrowRight className="w-3.5 h-3.5 text-neutral-500 group-hover:text-neutral-900 transition shrink-0" />
+                          )}
                         </Link>
                       );
                     })}
 
                     {isAdmin && (
-                      <div className="pt-3 border-t border-brand-lavender/40 mt-3">
+                      <div className="pt-3 border-t border-neutral-100 mt-3">
                         <Link
                           to={location.pathname.startsWith('/admin') ? '/dashboard' : '/admin'}
                           onClick={() => setMobileMenuOpen(false)}
-                          className="flex items-center justify-between px-4 py-2.5 rounded-2xl text-xs font-bold text-emerald-950 bg-brand-mint hover:bg-emerald-200 transition border border-emerald-300 shadow-2xs"
+                          className="flex items-center justify-between px-4 py-3 rounded-2xl text-xs font-bold text-emerald-950 bg-brand-mint hover:bg-emerald-200 transition border border-emerald-300 shadow-2xs"
                         >
                           <span className="flex items-center gap-2">
                             <BookOpen className="w-4 h-4 text-emerald-800" />
@@ -466,13 +484,13 @@ const Header = ({ onSearchClick }) => {
                 </div>
 
                 {/* Drawer Footer */}
-                <div className="pt-3.5 border-t border-brand-lavender/40 shrink-0">
+                <div className="pt-3.5 border-t border-neutral-100 shrink-0">
                   <button
                     onClick={() => {
                       setMobileMenuOpen(false);
                       handleLogout();
                     }}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold text-rose-600 bg-rose-50/80 hover:bg-rose-100 transition cursor-pointer border border-rose-200/80 shadow-2xs active:scale-98"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 transition cursor-pointer border border-rose-200 shadow-2xs active:scale-98"
                   >
                     <LogOut className="w-4 h-4" />
                     Sign Out

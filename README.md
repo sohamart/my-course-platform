@@ -1,16 +1,16 @@
 # MyCourse — Personal Learning Management System (PLMS)
 
-> **Tagline:** "Your Personal Learning Space."
+> **Your Personal Learning Space.**
 
-**MyCourse** is a private, production-minded Personal Learning Management System engineered with an **Apple Liquid Glass + Animated Water Droplet** design language and an enterprise-grade MERN + AWS S3 private storage architecture.
+MyCourse is a private, production-minded Personal Learning Management System engineered with an **Apple Liquid Glass + Animated Water Droplet** design language and an enterprise-grade MERN + AWS S3 private storage architecture.
 
 ---
 
 ## 💎 Design System: Liquid Glass + Soft Pastel Identity
 
-The interface is built around a proprietary **Shade + Pastel** 5-color palette, realistic 3D water droplets, and semi-transparent glass surfaces:
+The interface is built around a proprietary **Shade + Pastel 5-color palette**, realistic 3D water droplets, and semi-transparent glass surfaces.
 
-| Color | Hex | Purpose in MyCourse |
+| Color | Hex Code | Purpose in MyCourse |
 |---|---|---|
 | **Black** | `#111111` | Primary text, high-contrast CTA buttons, header icons |
 | **Off-white** | `#F5F5F5` | Main surface backgrounds |
@@ -18,106 +18,125 @@ The interface is built around a proprietary **Shade + Pastel** 5-color palette, 
 | **Mint** | `#DDF5E5` | Success metrics, completion badges, progress indicators |
 | **Ice Blue** | `#DFF3F8` | Glass decorative elements, cool ambient water reflections |
 
-### Visual Characteristics:
-- **Liquid Glass Cards**: Semi-transparent white backgrounds (`rgba(255, 255, 255, 0.58)`), `backdrop-filter: blur(28px) saturate(160%)`, delicate white borders, inner specular highlights, and soft layered shadows.
-- **3D Water Droplets**: Realistic CSS radial gradients, specular highlight dots, inner refractions, and organic floating physics.
-- **Distraction-Free Video & Document Experience**: Dark video player container embedded into the soft pastel glass frame; protected in-browser PDF reader with suppressed download/print toolbars.
+### Visual Characteristics
+
+- **Liquid Glass Cards:** Semi-transparent white backgrounds, backdrop blur, delicate white borders, inner highlights, and soft layered shadows.
+- **3D Water Droplets:** Realistic CSS radial gradients, specular highlights, inner refractions, and organic floating animations.
+- **Distraction-Free Learning:** Dark video player containers and a protected in-browser PDF reader.
 
 ---
 
 ## 🏛️ System Architecture & Core Capabilities
 
 ### 1. User Roles & Security
-- **Single Admin / Teacher Account**: Created exclusively via secure backend seeding script (`npm run seed`). Public registration can **never** create an admin account (client roles are strictly ignored; all public signups become `role: "student"`).
-- **Manual Course Access Grants**: Students cannot self-enroll or purchase courses. Admin explicitly assigns courses to students on the Enrollment Management screen.
-- **Zero-Trust Backend Authorization**: Every request to view course details, lessons, or stream media validates active course enrollment at the database level. Frontend-only hiding is never relied upon.
-- **Instant Revocation**: When an admin revokes course access, the student immediately loses access to all videos, lessons, and PDF documents.
+
+- **Single Admin / Teacher Account:** Created exclusively through a secure backend seeding script (`npm run seed`).
+- **Student Registration:** Public registration can only create student accounts.
+- **Manual Course Access:** Students cannot self-enroll or purchase courses. Admin explicitly assigns courses.
+- **Zero-Trust Backend Authorization:** Every request to view course details, lessons, or media validates active course enrollment.
+- **Instant Revocation:** When an admin revokes course access, the student immediately loses access to associated videos, lessons, and PDF documents.
 
 ### 2. Private AWS S3 Media Engine
-- All course thumbnails, high-definition video modules, and PDF notes remain in private storage.
-- **Admin Direct Upload**:
-  1. Admin selects a media file.
-  2. Backend validates MIME type, extension, and size limits (Thumbnails: max 5MB, Videos: max 500MB, PDFs: max 50MB).
-  3. Backend creates an AWS S3 Presigned Upload URL (HTTP `PUT`).
-  4. The browser uploads the file directly to S3.
-  5. The S3 object key is saved to MongoDB.
-- **Student Secure Streaming**:
-  1. Student requests a video or PDF note.
-  2. Backend verifies JWT and active course enrollment.
-  3. Backend generates a short-lived Presigned GET URL (15 to 60 minutes).
-  4. Frontend streams the video with HTTP Range support or renders the PDF in-browser with `Content-Disposition: inline`.
-- **Zero-Config Local Fallback**: When AWS credentials are not yet configured in `backend/.env`, MyCourse automatically activates its built-in Local S3 Storage Emulation layer with cryptographically signed tokens and range streaming, allowing 100% of features to run locally immediately.
+
+All course thumbnails, high-definition video modules, and PDF notes remain in private storage.
+
+#### Admin Direct Upload Workflow
+
+1. Admin selects a media file.
+2. Backend validates MIME type, extension, and file size.
+3. Backend creates an AWS S3 Pre-signed Upload URL (HTTP PUT).
+4. Browser uploads the file directly to S3.
+5. S3 object key is saved to MongoDB.
+
+**File Size Limits:**
+
+| Media Type | Maximum Size |
+|---|---:|
+| Thumbnails | 5 MB |
+| Videos | 500 MB |
+| PDFs | 50 MB |
+
+#### Student Secure Streaming
+
+1. Student requests a video or PDF note.
+2. Backend verifies JWT authentication and active course enrollment.
+3. Backend generates a short-lived Pre-signed GET URL (15–60 minutes).
+4. Frontend streams videos with HTTP Range support or displays PDFs in-browser.
+
+#### Local Storage Fallback
+
+When AWS credentials are not configured in `backend/.env`, MyCourse can activate its built-in Local S3 Storage Emulation layer for local development.
 
 ---
 
 ## 📁 Monorepo Folder Structure
 
-```
+```text
 mycourse/
+│
 ├── backend/
 │   ├── config/
-│   │   └── db.js                      # MongoDB Atlas connection + dev memory fallback
+│   │   └── db.js
 │   ├── controllers/
-│   │   ├── adminController.js         # Course, lesson, student & enrollment handlers
-│   │   ├── authController.js          # Register, login, logout, profile handlers
-│   │   ├── mediaController.js         # Presigned upload/stream controllers & local engine
-│   │   └── studentController.js       # Student dashboard, syllabus, access & progress
+│   │   ├── adminController.js
+│   │   ├── authController.js
+│   │   ├── mediaController.js
+│   │   └── studentController.js
 │   ├── middleware/
-│   │   ├── auth.js                    # JWT verification & admin/student role gates
-│   │   └── enrollment.js              # Database enrollment verification middleware
+│   │   ├── auth.js
+│   │   └── enrollment.js
 │   ├── models/
-│   │   ├── Course.js                  # Course track schema
-│   │   ├── Enrollment.js              # Unique studentId + courseId index
-│   │   ├── Lesson.js                  # Chapter, order, videoKey, and notes
-│   │   ├── Progress.js                # Per-student lesson watch time & completion
-│   │   └── User.js                    # Bcrypt hashed user schema (admin & student)
+│   │   ├── Course.js
+│   │   ├── Enrollment.js
+│   │   ├── Lesson.js
+│   │   ├── Progress.js
+│   │   └── User.js
 │   ├── routes/
 │   │   ├── adminRoutes.js
 │   │   ├── authRoutes.js
 │   │   ├── mediaRoutes.js
 │   │   └── studentRoutes.js
 │   ├── scripts/
-│   │   ├── seedAdmin.js               # Creates single admin and demo curriculum
-│   │   └── testIntegration.js        # Automated 12-scenario integration test suite
+│   │   ├── seedAdmin.js
+│   │   └── testIntegration.js
 │   ├── services/
-│   │   └── s3Service.js               # AWS SDK v3 client + presigned URL generator
+│   │   └── s3Service.js
 │   ├── utils/
-│   │   └── jwt.js                     # Token generation & cookie options
+│   │   └── jwt.js
 │   ├── .env.example
 │   ├── package.json
-│   └── server.js                      # Express app, Helmet, CORS, Rate Limiters
+│   └── server.js
 │
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── dashboard/             # WelcomeHero, StatsCard, ContinueLearning, CourseCard
-│   │   │   ├── effects/               # WaterDroplets, LiquidBackground, GlassCard
-│   │   │   ├── layout/                # Header, AdminSidebar, BottomNavigation, ProtectedRoute
-│   │   │   └── player/                # PDFViewerModal with in-app zoom & controls
+│   │   │   ├── dashboard/
+│   │   │   ├── effects/
+│   │   │   ├── layout/
+│   │   │   └── player/
 │   │   ├── context/
-│   │   │   ├── AuthContext.jsx        # User state, JWT storage, role helpers
-│   │   │   └── ToastContext.jsx       # Liquid glass toast notifications
+│   │   │   ├── AuthContext.jsx
+│   │   │   └── ToastContext.jsx
 │   │   ├── pages/
-│   │   │   ├── admin/                 # AdminDashboard, CourseManagement, LessonManagement,
-│   │   │   │                          # StudentManagement, EnrollmentManagement, StorageOverview
-│   │   │   ├── auth/                  # Login, Register
-│   │   │   ├── public/                # LandingPage
-│   │   │   └── student/               # Dashboard, Courses, CourseDetails, LearningPlayer, Progress, Profile
+│   │   │   ├── admin/
+│   │   │   ├── auth/
+│   │   │   ├── public/
+│   │   │   └── student/
 │   │   ├── services/
-│   │   │   └── api.js                 # Axios instance with credentials & bearer interceptors
+│   │   │   └── api.js
 │   │   ├── styles/
-│   │   │   ├── animations.css         # Keyframes for liquid drift, wave flow, floating droplets
-│   │   │   ├── glass.css              # Apple Liquid Glass CSS tokens & 3D droplet gradients
-│   │   │   └── globals.css            # Tailwind directives & base fonts
-│   │   ├── App.jsx                    # React Router DOM configuration
+│   │   │   ├── animations.css
+│   │   │   ├── glass.css
+│   │   │   └── globals.css
+│   │   ├── App.jsx
 │   │   └── main.jsx
 │   ├── index.html
 │   ├── package.json
-│   ├── tailwind.config.js             # 5-color Shade + Pastel palette tokens
-│   └── vite.config.js                 # Vite dev proxy configuration
+│   ├── tailwind.config.js
+│   └── vite.config.js
 │
 ├── .gitignore
-├── package.json                       # Monorepo root scripts
+├── package.json
 └── README.md
 ```
 
@@ -126,11 +145,14 @@ mycourse/
 ## 🚀 Quick Start & Local Setup
 
 ### 1. Prerequisites
-- **Node.js** v18+ (tested on v24.x)
-- **npm** v9+
+
+- Node.js v18+ (tested on v24.x)
+- npm v9+
 
 ### 2. Installation
+
 From the project root:
+
 ```bash
 # Install backend and frontend dependencies
 npm run install:all
@@ -138,23 +160,25 @@ npm run install:all
 
 ### 3. Environment Variables
 
-#### Backend (`backend/.env`):
+#### Backend (`backend/.env`)
+
 ```env
 PORT=5000
 NODE_ENV=development
 CLIENT_URL=http://localhost:5173
 
-# Optional: MongoDB Atlas URI. If omitted, MyCourse automatically boots an in-memory database!
+# Optional: MongoDB Atlas URI
+# If omitted, MyCourse can use an in-memory database.
 MONGODB_URI=
 
-JWT_SECRET=mycourse_super_secret_jwt_key_2026_at_least_32_characters_long
+JWT_SECRET=your_secure_jwt_secret
 JWT_EXPIRES_IN=7d
 
 ADMIN_EMAIL=admin@mycourse.local
-ADMIN_PASSWORD=AdminSecurePassword123!
+ADMIN_PASSWORD=your_admin_password
 ADMIN_NAME=Headmaster Admin
 
-# AWS S3 Configuration (Optional for dev; local S3 emulation is active by default)
+# AWS S3 Configuration
 AWS_REGION=us-east-1
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
@@ -162,28 +186,33 @@ AWS_S3_BUCKET_NAME=mycourse-media
 USE_LOCAL_S3_FALLBACK=true
 ```
 
-#### Frontend (`frontend/.env`):
+#### Frontend (`frontend/.env`)
+
 ```env
 VITE_API_URL=http://localhost:5000/api
 VITE_APP_NAME="MyCourse"
 VITE_APP_TAGLINE="Your Personal Learning Space"
 ```
 
-### 4. Running the Development Servers
-In two terminal tabs:
+### 4. Running Development Servers
 
-**Terminal 1 (Backend):**
+Open two terminal tabs.
+
+**Terminal 1 — Backend**
+
 ```bash
 npm run start:backend
-# Backend starts on http://localhost:5000
 ```
-*(On initial startup, the backend automatically seeds the admin and sample curriculum for instant evaluation!)*
 
-**Terminal 2 (Frontend):**
+Backend starts at `http://localhost:5000`.
+
+**Terminal 2 — Frontend**
+
 ```bash
 npm run start:frontend
-# Vite frontend starts on http://localhost:5173
 ```
+
+Frontend starts at `http://localhost:5173`.
 
 Open `http://localhost:5173` in your browser.
 
@@ -191,97 +220,142 @@ Open `http://localhost:5173` in your browser.
 
 ## 🔑 Pre-Seeded Evaluation Credentials
 
-You can use the one-click demo fill buttons on `/login` or enter:
+The original README provides these demo credentials:
 
-| Role | Email | Password | What You Can Do |
-|---|---|---|---|
-| **Admin** | `admin@mycourse.local` | `AdminSecurePassword123!` | Create/edit courses, upload S3 videos & notes, grant/revoke access |
-| **Student (Soham)** | `soham@mycourse.local` | `Password123!` | Access assigned courses (4 active tracks, 12 lessons completed, 75% progress on React) |
+| Role | Email | Password |
+|---|---|---|
+| **Admin** | `admin@mycourse.local` | `AdminSecurePassword123!` |
+| **Student (Soham)** | `soham@mycourse.local` | `Password123!` |
 
 ---
 
 ## ☁️ AWS S3 Production Setup Guide
 
-When you are ready to connect a live AWS S3 private bucket:
+### Step 1: Create an S3 Bucket
 
-1. **Create S3 Bucket**:
-   - Bucket Name: e.g., `mycourse-private-vault`
-   - Region: e.g., `us-east-1`
-   - **Block all public access**: Keep **ENABLED** (100% private).
+- Create an Amazon S3 bucket.
+- Select the required AWS region.
+- Keep **Block All Public Access ENABLED**.
 
-2. **Configure Bucket CORS**:
-   Add this CORS configuration under the **Permissions** tab of your S3 bucket:
-   ```json
-   [
-     {
-       "AllowedHeaders": ["*"],
-       "AllowedMethods": ["GET", "PUT", "HEAD"],
-       "AllowedOrigins": ["http://localhost:5173", "https://yourdomain.com"],
-       "ExposeHeaders": ["Content-Range", "Accept-Ranges", "Content-Length", "Content-Disposition"],
-       "MaxAgeSeconds": 3600
-     }
-   ]
-   ```
+### Step 2: Configure Bucket CORS
 
-3. **Create IAM Policy & User**:
-   Attach this policy to your IAM programmatic user:
-   ```json
-   {
-     "Version": "2012-10-17",
-     "Statement": [
-       {
-         "Effect": "Allow",
-         "Action": [
-           "s3:PutObject",
-           "s3:GetObject",
-           "s3:DeleteObject"
-         ],
-         "Resource": "arn:aws:s3:::mycourse-private-vault/*"
-       }
-     ]
-   }
-   ```
+Add the following configuration under the S3 bucket's Permissions tab.
 
-4. **Update `backend/.env`**:
-   ```env
-   AWS_REGION=us-east-1
-   AWS_ACCESS_KEY_ID=AKIA...YOUR_KEY...
-   AWS_SECRET_ACCESS_KEY=wJalr...YOUR_SECRET...
-   AWS_S3_BUCKET_NAME=mycourse-private-vault
-   ```
-   Restart the backend. All file uploads and stream requests now seamlessly route through AWS S3.
+```json
+[
+  {
+    "AllowedHeaders": ["*"],
+    "AllowedMethods": ["GET", "PUT", "HEAD"],
+    "AllowedOrigins": [
+      "http://localhost:5173",
+      "https://yourdomain.com"
+    ],
+    "ExposeHeaders": [
+      "Content-Range",
+      "Accept-Ranges",
+      "Content-Length",
+      "Content-Disposition"
+    ],
+    "MaxAgeSeconds": 3600
+  }
+]
+```
+
+### Step 3: Create IAM Policy
+
+Attach the following required permissions to the IAM identity used by the application:
+
+- `s3:PutObject`
+- `s3:GetObject`
+- `s3:DeleteObject`
+
+Example policy:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject"
+      ],
+      "Resource": "arn:aws:s3:::mycourse-private-vault/*"
+    }
+  ]
+}
+```
+
+### Step 4: Update Backend Environment
+
+Configure the AWS region and bucket name in `backend/.env`.
+
+```env
+AWS_REGION=us-east-1
+AWS_S3_BUCKET_NAME=mycourse-private-vault
+```
+
+Restart the backend after updating the configuration.
 
 ---
 
 ## 🧪 Automated Integration Tests
 
 Run the full automated integration test suite:
+
 ```bash
 npm test
 ```
 
-### Verified Test Cases:
+### Verified Test Cases
+
 - [x] Admin account seeded with `role: "admin"`
-- [x] Student registration forces `role: "student"` (client injection blocked)
-- [x] Duplicate email registration is strictly rejected
+- [x] Student registration forces `role: "student"`
+- [x] Duplicate email registration is rejected
 - [x] Admin can create courses
-- [x] Admin can add lessons with video and PDF notes keys
-- [x] AWS S3 Presigned Upload URL generated successfully
-- [x] Short-lived Presigned View URL generated successfully
+- [x] Admin can add lessons with video and PDF note keys
+- [x] AWS S3 Pre-signed Upload URL generated successfully
+- [x] Short-lived Pre-signed View URL generated successfully
 - [x] Unassigned student receives 403 Forbidden on course content
 - [x] Admin successfully grants manual course access
 - [x] Student gains verified access after enrollment
-- [x] Student lesson watch time and completion recorded accurately
+- [x] Student lesson watch time and completion are recorded
 - [x] Revoked student immediately loses media and course access
 
 ---
 
 ## 🚢 Future Deployment Readiness (Docker & EC2)
 
-The application is structured for instant containerization:
-1. Building the frontend produces static production assets in `frontend/dist`.
-2. `backend/server.js` already includes built-in detection to serve `frontend/dist` when present.
-3. Both can run in a single container or behind Nginx on AWS EC2, while AWS S3 remains the private media repository.
+The application is structured for containerization and cloud deployment:
 
-#   m y - c o u r s e - p l a t f o r m  
- 
+1. Building the frontend produces static production assets in `frontend/dist`.
+2. `backend/server.js` includes built-in detection to serve `frontend/dist` when present.
+3. Both can run in a single container or behind a reverse proxy on AWS EC2.
+4. AWS S3 remains the private media repository.
+
+---
+
+## 🌐 Project Links
+
+- **Live Website:** https://mycourse.soham.cyou
+- **GitHub Repository:** https://github.com/sohamart/my-course-platform
+
+---
+
+## 👨‍💻 Developer
+
+**Soham Dutta**
+
+GitHub: [@sohamart](https://github.com/sohamart)
+
+**Project:** MyCourse — Personal Learning Management System (PLMS)
+
+---
+
+<p align="center">
+
+  **MyCourse — Your Personal Learning Space.**
+
+</p>
